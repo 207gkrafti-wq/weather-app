@@ -27,10 +27,10 @@ const WEATHER_CODES = {
 function App() {
 
   function getWeatherCode(code){
-    return
+    return WEATHER_CODES[code]
   }
 
-  async function getNowWeather() {
+  async function getNowWeather(lat, lon) {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=42.885&longitude=47.620&current=temperature_2m,apparent_temperature,weather_code&timezone=auto&_t=${Date.now()}`;
 
     const response = await fetch(url, { cache: 'no-store' });
