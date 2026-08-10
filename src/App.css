@@ -1,11 +1,4 @@
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-
 .header{
-    border: 1px solid;
     position: absolute;
     top: 0;right: 0;left: 0;
     background-color: rgba(255, 255, 255, 0);
@@ -13,23 +6,79 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
 }
 
 .header__logo{
-    border: 1px solid;
     height: 100%;
     width: 200px;
     background-color: rgb(46, 178, 255);
+    padding: 10px 0;
 }
 
-.header--logo{
+.header__logo-img{
 
 }
 
 .header__search{
-
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 35px;
+    width: 400px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
 }
 
-.header--search{
-    
+.header__search-input{
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.06rem;
+    height: 100%;
+    width: 300px;
+    outline: none;
+    border: none;
+}
+
+.header__search-button{
+    background-image: url('assets/search.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 25px;
+    width: 25px;
+    border: none;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0);
+    cursor: pointer;
+}
+
+.main{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 150px;
+    gap: 20px;
+}
+
+.main__now-weather{
+    width: 700px;
+    height: 400px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 8px;
+}
+
+.main__next-time-weather{
+    width: 900px;
+    height: 150px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 8px;
+}
+
+.main__next-day-weather{
+
 }
