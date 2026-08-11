@@ -103,10 +103,20 @@
 
 .main__next-time-weather{
     width: 900px;
-    height: 150px;
+    height: fit-content;
+    min-height: 150px;
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex-direction: row;
+    overflow-x: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255, 255, 255) rgba(255, 255, 255, 0);
+    padding: 10px;
+    gap: 5px;
 }
 
 .main__next-day-weather{

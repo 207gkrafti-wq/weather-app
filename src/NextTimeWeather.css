@@ -1,0 +1,32 @@
+.main__next-time-weather__block{
+    background-color: rgba(255, 255, 255, 0.377);
+    backdrop-filter: blur(15px);
+    border-radius: 8px;
+    /* width: 200px; */
+    /* height: 100%; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.main__next-time-weather__block-icon{
+    width: 80px;
+    height: 80px;
+}
+
+.main__next-time-weather-icon{
+    width: 100%;
+}
+
+.main__next-time-weather__block-info{
+
+
+    .temperature{
+
+    }
+
+    .time{
+
+    }
+}

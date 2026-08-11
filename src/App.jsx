@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import NowWeather from './NowWeather'
-import { nanoid } from 'nanoid';
+import NextTimeWeather from './nextTimeWeather';
 
 const WEATHER_CODES = {
   0: ['Ясно', '/day_icon/01d.svg', '/night_icon/01n.svg'],
@@ -25,9 +25,9 @@ const WEATHER_CODES = {
   95: ['Гроза', '/day_icon/11d.svg', '/night_icon/11n.svg'],
 };
 
-const DAYS_WEEK = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб']
+const DAYS_WEEK = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
 
-const MONTH = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
+const MONTH = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
 
 
 if (!localStorage.getItem('cityName')) {
@@ -39,7 +39,7 @@ function App() {
   const [value, setValue] = useState('')
   const [local, setLocal] = useState({ lat: '', lon: '', name: '' })
   const [dataCity, setDataCity] = useState([])
-  const [weatherData, setWeatherData] = useState(null);
+  const [weatherData, setWeatherData] = useState({ now: null, nextTime: null, nextDay: null });
 
   function getWeatherCode(code) {
     return WEATHER_CODES[code]
@@ -55,7 +55,7 @@ function App() {
 
   }, [])
 
-  function getDate(date){ 
+  function getDate(date) {
     return `${DAYS_WEEK[new Date(date).getDay()]}, ${MONTH[new Date(date).getMonth()]} ${new Date(date).getDate()}`
   }
 
@@ -63,7 +63,8 @@ function App() {
     if (localStorage.getItem('cityName') && local.lat != '' && local.lon != '') {
       const json = JSON.stringify({ lat: local.lat, lon: local.lon, name: local.name })
       localStorage.setItem('cityName', json)
-      parseNowWeather().then((data) => setWeatherData(data));
+      parseNowWeather().then((data) => setWeatherData((prev) => ({ ...prev, now: data })));
+      parseNextTimeWeather().then((data) => setWeatherData((prev) => ({ ...prev, nextTime: data })));
     }
     setValue('')
 
@@ -106,17 +107,17 @@ function App() {
 
       const weatherNowData = {
         city: name,
-        time: getDate(curr.time.replace('T', ' ').split(' ')[0]),                            // "2026-08-10 15:30"
+        time: getDate(curr.time.replace('T', ' ').split(' ')[0]),     // "2026-08-10 15:30"
         temp: `${Math.round(curr.temperature_2m)}°C`,                 // "29°C"
         feelsLike: `${Math.round(curr.apparent_temperature)}°C`,      // "31°C"
         humidity: `${curr.relative_humidity_2m}%`,                    // "65%"
         windSpeed: `${curr.wind_speed_10m} км/ч`,                     // "5.4 км/ч"
         windDirection: getWindDirectionName(curr.wind_direction_10m), // "Юго-Восточный (ЮВ)"
-        weatherCode: getWeatherCode(curr.weather_code)[0],               // Ясно
+        weatherCode: getWeatherCode(curr.weather_code)[0],            // Ясно
         icon: getIcon(
           curr.time.replace('T', ' ').split(' ')[1],
-          daily.sunrise[0].replace('T', ' ').split(' ')[1],
           daily.sunset[0].replace('T', ' ').split(' ')[1],
+          daily.sunrise[0].replace('T', ' ').split(' ')[1],
           curr.weather_code
         )
       }
@@ -129,12 +130,51 @@ function App() {
     }
   }, [])
 
+
+
+  // Парсем погоду на 24 часа
+  const parseNextTimeWeather = useCallback(async () => {
+    const lat = JSON.parse(localStorage.getItem('cityName')).lat
+    const lon = JSON.parse(localStorage.getItem('cityName')).lon
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weather_code&daily=sunrise,sunset&forecast_hours=24&timezone=auto`;
+
+    try {
+      const response = await fetch(url, { cache: 'no-store' });
+      const data = await response.json();
+
+      const { time, temperature_2m, weather_code } = data.hourly;
+      const sunrise = data.daily.sunrise[0].split('T')[1]; // "05:08"
+      const sunset = data.daily.sunset[0].split('T')[1];   // "19:22"
+
+      const forecast24h = time.map((timeStr, index) => {
+        const hour = timeStr.split('T')[1]; // "2026-08-11", "15:00"
+
+        return {
+          time: hour,                                  // "15:00"
+          temp: `${Math.round(temperature_2m[index])}°C`, // "29°C"
+          icon: getIcon(
+            hour,
+            sunset,
+            sunrise,
+            weather_code[index]
+          )
+        };
+      });
+
+      console.log(forecast24h);
+      return forecast24h;
+
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
+
+
   useEffect(() => {
-    parseNowWeather().then((data) => setWeatherData(data));
-  }, [parseNowWeather]);
-
-  
-
+    parseNowWeather().then((data) => setWeatherData((prev) => ({ ...prev, now: data })));
+    parseNextTimeWeather().then((data) => setWeatherData((prev) => ({ ...prev, nextTime: data })));
+  }, [parseNowWeather, parseNextTimeWeather]);
 
   const listCity = dataCity
     .filter((elem) => elem.name.toLowerCase().includes(value.toLowerCase()) && value)
@@ -185,10 +225,14 @@ function App() {
       <main className="main">
         <div className="main__now-weather">
           <NowWeather
-            weather={weatherData}
+            weather={weatherData.now}
           />
         </div>
-        <div className="main__next-time-weather"></div>
+        <div className="main__next-time-weather">
+          <NextTimeWeather
+            weather={weatherData.nextTime}
+          />
+        </div>
         <div className="main__next-day-weather"></div>
       </main>
 
