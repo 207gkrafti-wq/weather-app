@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import NowWeather from './NowWeather'
 import { nanoid } from 'nanoid';
@@ -25,23 +25,38 @@ const WEATHER_CODES = {
   95: ['Гроза', './assets/day_icon/11d.svg', './assets/night_icon/11n.svg'],
 };
 
+if (!localStorage.getItem('cityName')) {
+  const json = JSON.stringify({ lat: '42.885', lon: '47.620', name: 'Каспийск' })
+  localStorage.setItem('cityName', json)
+}
 function App() {
 
   const [value, setValue] = useState('')
-  const [local, setLocal] = useState({ lat: 0, lon: 0 })
+  const [local, setLocal] = useState({ lat: '', lon: '', name: '' })
+  const [dataCity, setDataCity] = useState([])
 
   function getWeatherCode(code) {
     return WEATHER_CODES[code]
   }
 
-  async function parseCity() {
-    const respons = await fetch('./russian-cities.json')
-    const data = await respons.text()
-    console.log(data)
-    // return data;
+  useEffect(() => {
+    async function parseCity() {
+      const respons = await fetch('/public/russian-cities.json')
+      const data = await respons.json()
+      setDataCity(data);
+    }
+    parseCity()
+
+  }, [])
+
+  function setCity() {
+    if (localStorage.getItem('cityName') && local.lat != 0 && local.lon != 0) {
+      const json = JSON.stringify({ lat: local.lat, lon: local.lon, name: local.name })
+      localStorage.setItem('cityName', json)
+    }
+    setValue('')
   }
 
-  parseCity()
 
   function getWindDirectionName(degrees) {
     const directions = ['Северный (С)', 'Северо-Восточный (СВ)', 'Восточный (В)', 'Юго-Восточный (ЮВ)', 'Южный (Ю)', 'Юго-Западный (ЮЗ)', 'Западный (З)', 'Северо-Западный (СЗ)'];
@@ -49,9 +64,7 @@ function App() {
     return directions[index];
   }
 
-  function getCity() {
 
-  }
 
   // Получаем иконку погоды
   function getIcon(time, maxTime, minTime, code) {
@@ -65,7 +78,11 @@ function App() {
 
 
   // Парсем данные текущей погоды
-  async function parseNowWeather(lat, lon) {
+  const parseNowWeather = useCallback(async () => {
+    const lat = JSON.parse(localStorage.getItem('cityName')).lat
+    const lon = JSON.parse(localStorage.getItem('cityName')).lon
+    const name = JSON.parse(localStorage.getItem('cityName')).name
+
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,wind_direction_10m,weather_code&daily=sunrise,sunset&forecast_days=1&timezone=auto`;
 
     try {
@@ -76,7 +93,7 @@ function App() {
       const daily = data.daily;
 
       const weatherNowData = {
-        city: getCity(),
+        city: name,
         time: curr.time.replace('T', ' '),                            // "2026-08-10 15:30"
         temp: `${Math.round(curr.temperature_2m)}°C`,                 // "29°C"
         feelsLike: `${Math.round(curr.apparent_temperature)}°C`,      // "31°C"
@@ -98,31 +115,26 @@ function App() {
     } catch (error) {
       console.error(error)
     }
-  }
-
-  useEffect(() => {
-    parseNowWeather(42.885, 47.620)
-    return () => {
-      parseNowWeather()
-    }
   }, [])
 
 
-  // const listCity = parseCity.map((elem) => {
-  //   console.log(elem)
-  //   // if (value.includes(elem.name)) {
-  //   //   return (
-  //   //     <option
-  //   //       key={nanoid()}
-  //   //       data-lat={elem.coords.lat}
-  //   //       data-lon={elem.coords.lon}
-  //   //     >
-  //   //       {elem.name}
-  //   //     </option>
-  //   //   )
-  //   // }
-  // })
 
+  const listCity = dataCity
+    .filter((elem) => elem.name.toLowerCase().includes(value.toLowerCase()) && value)
+    .map((elem, index) => {
+      return (
+        <li className='header__search-city-list-li'
+          key={index}
+          onClick={() => {
+            setLocal({ lat: elem.coords.lat, lon: elem.coords.lon, name: elem.name })
+            setValue(elem.name)
+          }}
+        >
+          {elem.name}
+        </li>
+      )
+    })
+  // console.log(local)
   return (
     <>
       <header className="header">
@@ -134,23 +146,29 @@ function App() {
             type="text"
             name=""
             id=""
-            list='city'
             className="header__search-input"
             placeholder="Поиск города"
             value={value}
             onChange={(e) => { setValue(e.target.value) }}
           />
-          <datalist id='city'>
-            {/* {listCity} */}
-          </datalist>
-          <button className="header__search-button"></button>
+          {value ?
+            <ul className='header__search-city-list-ul'>
+              {listCity}
+            </ul>
+            :
+            ''
+          }
+          <button
+            className="header__search-button"
+            onClick={setCity}
+          ></button>
         </div>
       </header>
 
       <main className="main">
         <div className="main__now-weather">
           <NowWeather
-            parseNowWeather={parseNowWeather}
+            parseNowWeather={parseNowWeather()}
           />
         </div>
         <div className="main__next-time-weather"></div>
