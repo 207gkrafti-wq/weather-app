@@ -1,19 +1,23 @@
+import './NowWeather.css'
 
-function NowWeather({parseNowWeather}){
+function NowWeather({ weather }) {
+
+    if (!weather) {
+        return <div className="loading">Загрузка погоды...</div>;
+    }
     return (<>
-        <div className="">
-            <section>
-                <img src="" alt="" className="" />
+            <section className="main__now-weather__block-icon">
+                <img src={weather.icon} alt="" className="main__now-weather-icon" />
             </section>
-            <section>
-                <p className="city"></p>
-                <p className="temperature"></p>
-                <p className="date"></p>
-                <p className="condition"></p>
-                <p className="feeling"></p>
-                <p className="humidity-time-direct"></p>
+            <section className="main__now-weather__block-info">
+                <p className="city">{weather.city}</p>
+                <p className="temperature">{weather.temp}</p>
+                <p className="date">{weather.time}</p>
+                <p className="condition">{weather.weatherCode}</p>
+                <p className="feeling">Ощущяется как {weather.feelsLike}</p>
+                <p className="humidity">Влажность {weather.humidity}</p>
+                <p className="speed-direct">{weather.windSpeed} | {weather.windDirection}</p>
             </section>
-        </div>
     </>)
 }
 

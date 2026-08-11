@@ -96,6 +96,9 @@
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .main__next-time-weather{
@@ -108,11 +111,4 @@
 
 .main__next-day-weather{
 
-}
-
-datalist{
-    background-color: beige;
-}
-option{
-    background-color: antiquewhite;
 }

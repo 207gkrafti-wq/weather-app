@@ -1,0 +1,51 @@
+.main__now-weather__block-icon{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 300px;
+    /* height: auto; */
+}
+
+.main__now-weather-icon{
+    width: 100%;
+}
+
+.main__now-weather__block-info{
+    display: flex;
+    align-items: left;
+    justify-content: center;
+    flex-direction: column;
+    
+    color: rgb(0, 0, 0);
+    background-color: rgba(255, 255, 255, 0.466);
+
+    height: 90%;
+    width: 280px;
+    padding: 0 10px;
+    border-radius: 9px;
+
+    .city{
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 2rem;
+    }
+    .temperature{
+        color: rgb(0, 0, 0);
+        font-size: 6rem;
+    }
+    .date{
+        font-size: 1.6rem;
+    }
+    .condition{
+        font-size: 1.2rem;
+    }
+    .feeling{
+        font-size: 1.2rem;
+    }
+    .humidity{
+        font-size: 1.2rem;
+    }
+    .speed-direct{
+        font-size: 1.2rem;
+    }
+}
