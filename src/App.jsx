@@ -42,6 +42,7 @@ function App() {
   const [dataCity, setDataCity] = useState([])
   const [weatherData, setWeatherData] = useState({ now: null, nextTime: null, nextDay: null });
 
+  // Расшифровка кода погоды
   function getWeatherCode(code) {
     return WEATHER_CODES[code]
   }
@@ -56,10 +57,12 @@ function App() {
 
   }, [])
 
+
   function getDate(date) {
     return `${DAYS_WEEK[new Date(date).getDay()]}, ${MONTH[new Date(date).getMonth()]} ${new Date(date).getDate()}`
   }
 
+  // Сменяем город
   function setCity() {
     if (localStorage.getItem('cityName') && local.lat != '' && local.lon != '') {
       const json = JSON.stringify({ lat: local.lat, lon: local.lon, name: local.name })
@@ -72,7 +75,7 @@ function App() {
 
   }
 
-
+  // Расшифровка напровления ветра
   function getWindDirectionName(degrees) {
     const directions = ['Северный (С)', 'Северо-Восточный (СВ)', 'Восточный (В)', 'Юго-Восточный (ЮВ)', 'Южный (Ю)', 'Юго-Западный (ЮЗ)', 'Западный (З)', 'Северо-Западный (СЗ)'];
     const index = Math.round(degrees / 45) % 8;
@@ -219,13 +222,14 @@ function App() {
     }
   }, [])
 
-
+  // Обновляем данные
   useEffect(() => {
     parseNowWeather().then((data) => setWeatherData((prev) => ({ ...prev, now: data })));
     parseNextTimeWeather().then((data) => setWeatherData((prev) => ({ ...prev, nextTime: data })));
     parseNextDaysWeather().then((data) => setWeatherData((prev) => ({ ...prev, nextDay: data })));
   }, [parseNowWeather, parseNextTimeWeather, parseNextDaysWeather]);
 
+  // Получаем список городов России
   const listCity = dataCity
     .filter((elem) => elem.name.toLowerCase().includes(value.toLowerCase()) && value)
     .map((elem, index) => {
