@@ -1,4 +1,4 @@
-.main__now-weather__block-icon{
+.main__now-weather__block-icon {
     display: flex;
     align-items: center;
     justify-content: start;
@@ -6,16 +6,17 @@
     /* height: auto; */
 }
 
-.main__now-weather-icon{
+.main__now-weather-icon {
     width: 100%;
+    min-width: 100px;
 }
 
-.main__now-weather__block-info{
+.main__now-weather__block-info {
     display: flex;
     align-items: left;
     justify-content: center;
     flex-direction: column;
-    
+
     color: rgb(0, 0, 0);
     background-color: rgba(255, 255, 255, 0.466);
 
@@ -24,28 +25,33 @@
     padding: 0 10px;
     border-radius: 9px;
 
-    .city{
+    .city {
         display: flex;
         flex-wrap: wrap;
-        font-size: 2rem;
+        font-size:clamp(1.4rem, 6vw, 2rem);
     }
-    .temperature{
+
+    .temperature {
         color: rgb(0, 0, 0);
-        font-size: 6rem;
+        font-size:clamp(4rem, 10vw, 6rem);
     }
-    .date{
-        font-size: 1.6rem;
+
+    .date {
+        font-size:clamp(1.2rem, 4vw, 1.8rem);
     }
-    .condition{
+
+    .condition,
+    .feeling,
+    .humidity,
+    .speed-direct {
         font-size: 1.2rem;
+        font-size:clamp(1rem, 3vw, 1.4rem);
+        font-weight: 500;
     }
-    .feeling{
-        font-size: 1.2rem;
-    }
-    .humidity{
-        font-size: 1.2rem;
-    }
-    .speed-direct{
-        font-size: 1.2rem;
+}
+
+@media (max-width: 700px) {
+    .main__now-weather__block-info {
+        width: fit-content;
     }
 }

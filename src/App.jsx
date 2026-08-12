@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 import NowWeather from './NowWeather'
 import NextTimeWeather from './nextTimeWeather';
+import NextDayWeather from './NextDayWeather';
 
 const WEATHER_CODES = {
   0: ['Ясно', '/day_icon/01d.svg', '/night_icon/01n.svg'],
@@ -65,6 +66,7 @@ function App() {
       localStorage.setItem('cityName', json)
       parseNowWeather().then((data) => setWeatherData((prev) => ({ ...prev, now: data })));
       parseNextTimeWeather().then((data) => setWeatherData((prev) => ({ ...prev, nextTime: data })));
+      parseNextDaysWeather().then((data) => setWeatherData((prev) => ({ ...prev, nextDay: data })));
     }
     setValue('')
 
@@ -170,11 +172,59 @@ function App() {
     }
   }, [])
 
+  // Парсем погоду на 7 дней
+  const parseNextDaysWeather = useCallback(async () => {
+    const lat = JSON.parse(localStorage.getItem('cityName')).lat
+    const lon = JSON.parse(localStorage.getItem('cityName')).lon
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=weather_code&daily=temperature_2m_max,temperature_2m_min&forecast_days=7&timezone=auto`;
+
+    try {
+      const response = await fetch(url, { cache: 'no-store' });
+      const data = await response.json();
+
+      const { time: dailyTime, temperature_2m_max, temperature_2m_min } = data.daily;
+      const { time: hourlyTime, weather_code: hourlyCodes } = data.hourly;
+
+      const forecast7Days = dailyTime.map((dateStr, dayIndex) => {
+        // Ищем индекс для 12:00 текущего дня (День)
+        const dayCodeIndex = hourlyTime.findIndex(t => t === `${dateStr}T12:00`);
+        // Ищем индекс для 00:00 текущего дня (Ночь)
+        const nightCodeIndex = hourlyTime.findIndex(t => t === `${dateStr}T00:00`);
+
+        // Получаем коды погоды (если за полночь нет данных — берем 03:00)
+        const dayCode = dayCodeIndex !== -1 ? hourlyCodes[dayCodeIndex] : hourlyCodes[dayIndex * 24 + 12];
+        const nightCode = nightCodeIndex !== -1 ? hourlyCodes[nightCodeIndex] : hourlyCodes[dayIndex * 24 + 2];
+
+        const dayCodeData = getWeatherCode(dayCode);     // ['Ясно', '/day_icon/...', '/night_icon/...']
+        const nightCodeData = getWeatherCode(nightCode);
+
+        return {
+          date: getDate(dateStr),                                 // "Ср, Август 12"
+          maxTemp: `${Math.round(temperature_2m_max[dayIndex])}°C`, // "28°C"
+          minTemp: `${Math.round(temperature_2m_min[dayIndex])}°C`, // "19°C"
+          dayIcon: dayCodeData[1],                                // Дневная иконка в 12:00
+          nightIcon: nightCodeData[2],                            // Ночная иконка в 00:00
+          dayCondition: dayCodeData[0],                           // Описание погоды днем
+          nightCondition: nightCodeData[0]                        // Описание погоды ночью
+        };
+      });
+
+      console.log('Точный прогноз на 7 дней:', forecast7Days);
+      return forecast7Days;
+
+    } catch (error) {
+      console.error('Ошибка при загрузке 7-дневного прогноза:', error);
+      return null;
+    }
+  }, [])
+
 
   useEffect(() => {
     parseNowWeather().then((data) => setWeatherData((prev) => ({ ...prev, now: data })));
     parseNextTimeWeather().then((data) => setWeatherData((prev) => ({ ...prev, nextTime: data })));
-  }, [parseNowWeather, parseNextTimeWeather]);
+    parseNextDaysWeather().then((data) => setWeatherData((prev) => ({ ...prev, nextDay: data })));
+  }, [parseNowWeather, parseNextTimeWeather, parseNextDaysWeather]);
 
   const listCity = dataCity
     .filter((elem) => elem.name.toLowerCase().includes(value.toLowerCase()) && value)
@@ -196,7 +246,7 @@ function App() {
     <>
       <header className="header">
         <div className="header__logo">
-          <img src="" alt="logo" className="header__logo-img" />
+          <img src="/logo.svg" alt="logo" className="header__logo-img" />
         </div>
         <div className="header__search">
           <input
@@ -228,12 +278,26 @@ function App() {
             weather={weatherData.now}
           />
         </div>
+        <div className="name-block">
+          <h2 className="">
+            Погода на 24 часа
+          </h2>
+        </div>
         <div className="main__next-time-weather">
           <NextTimeWeather
             weather={weatherData.nextTime}
           />
         </div>
-        <div className="main__next-day-weather"></div>
+        <div className="name-block">
+          <h2 className="">
+            Погода на 7 дней
+          </h2>
+        </div>
+        <div className="main__next-day-weather">
+          <NextDayWeather
+            weather={weatherData.nextDay}
+          />
+        </div>
       </main>
 
     </>

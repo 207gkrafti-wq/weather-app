@@ -1,0 +1,43 @@
+.main__next-day-weather__block{
+    background-color: rgba(255, 255, 255, 0.377);
+    backdrop-filter: blur(15px);
+    border-radius: 8px;
+    min-width: 200px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.main__next-day-weather__block-date{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    .day-date{
+
+    }
+}
+
+.main__next-day-weather__block-day-info{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    .max-temp{
+
+    }
+}
+
+.main__next-day-weather__block-night-info{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    .min-temp{
+
+    }
+}
