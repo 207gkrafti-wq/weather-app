@@ -1,3 +1,5 @@
+@import url('./fonts.css');
+
 .main__next-time-weather__block{
     background-color: rgba(255, 255, 255, 0.377);
     backdrop-filter: blur(15px);

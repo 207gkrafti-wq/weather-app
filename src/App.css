@@ -1,3 +1,5 @@
+@import url('./fonts.css');
+
 .header {
     position: fixed;
     top: 0;
@@ -38,6 +40,7 @@
 }
 
 .header__search-input {
+    font-family: 'Raleway', sans-serif;
     font-size: 1rem;
     font-weight: 400;
     letter-spacing: 0.06rem;
@@ -61,6 +64,8 @@
 }
 
 .header__search-city-list-ul {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
     position: absolute;
     top: 101%;
     width: 95%;
@@ -88,6 +93,8 @@
 }
 
 .main {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -96,11 +103,12 @@
     gap: 20px;
     width: 100%;
     padding: 0 10px;
+    padding-bottom: 50px;
 }
 
 .main__now-weather {
     box-shadow: 0 0 10px 2px rgba(245, 245, 245, 0.521);
-    width: min(100%, 700px);    
+    width: min(100%, 700px);
     height: 400px;
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
@@ -123,9 +131,9 @@
 }
 
 .main__next-time-weather,
-.main__next-day-weather{
+.main__next-day-weather {
     box-shadow: 0 0 10px 2px rgba(245, 245, 245, 0.521);
-    width: min(100%, 900px); 
+    width: min(100%, 900px);
     height: fit-content;
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
