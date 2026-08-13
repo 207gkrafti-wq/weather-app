@@ -1,16 +1,31 @@
-# React + Vite
+# 🌤️ Погода в городах России (Weather App)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Современное веб-приложение для просмотра актуального прогноза погоды в городах России с адаптивным дизайном и интерактивными элементами.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📱 Скриншоты интерфейса
 
-## React Compiler
+| Десктопная версия | Мобильная версия |
+| :---: | :---: |
+| <img width="1587" height="900" alt="image" src="https://github.com/user-attachments/assets/6aee5296-428e-4cf6-9061-0d9709bb6b53" /> | <img width="343" height="713" alt="image" src="https://github.com/user-attachments/assets/07dc8fce-d5bf-41c0-b201-f3a63c544c56" />|
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ✨ Основные возможности
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **Поиск по городам:** Удобный поиск прогноза погоды для городов России.
+* **Текущая погода:** Отображение температуры, ощущаемой температуры, состояния неба (пасмурно, дождь, ясно и т. д.), влажности, скорости и направления ветра.
+* **Почасовой прогноз (на 24 часа):** Детализированный прогноз по часам с иконками и температурой.
+* **Прогноз на неделю (на 7 дней):** Карточки прогноза с минимальной и максимальной температурой на каждый день.
+* **Адаптивный UI:** Полная адаптивность под любые устройства (от смартфонов до широкоформатных мониторов) с современным Glassmorphism-дизайном.
+
+---
+
+## 🛠️ Технологии
+
+* **Frontend:** HTML5, CSS3 / SCSS, JavaScript (ES6+)
+* **API:** api.open-meteo
+* **Дизайн:** Glassmorphism UI (эффект матового стекла), адаптивная сетка (Flexbox / Grid)
+
+---
